@@ -39,6 +39,7 @@ public class UsbSerialportForAndroidModule extends ReactContextBaseJavaModule im
     public static final String CODE_DEVICE_NOT_OPEN = "device_not_open";
     public static final String CODE_SEND_FAILED = "send_failed";
     public static final String CODE_DEVICE_NOT_OPEN_OR_CLOSED = "device_not_open_or_closed";
+    private String newline = TextUtil.newline_crlf;
 
     private final ReactApplicationContext reactContext;
     private final Map<Integer, UsbSerialPortWrapper> usbSerialPorts = new HashMap<Integer, UsbSerialPortWrapper>();
@@ -167,14 +168,20 @@ public class UsbSerialportForAndroidModule extends ReactContextBaseJavaModule im
     }
 
     @ReactMethod
-    public void send(int deviceId, String hexStr, Promise promise) {
+    public void send(int deviceId, String str, Promise promise, Boolean hexEnabled=true) {
         UsbSerialPortWrapper wrapper = usbSerialPorts.get(deviceId);
         if (wrapper == null) {
             promise.reject(CODE_DEVICE_NOT_OPEN, "device not open");
             return;
         }
 
-        byte[] data = hexStringToByteArray(hexStr);
+        byte[] data;
+        if(hexEnabled) {
+            data = hexStringToByteArray(str);
+        } else {
+            data = (str + newline).getBytes();
+        }
+        byte[] data =
         try {
             wrapper.send(data);
             promise.resolve(null);
@@ -183,7 +190,6 @@ public class UsbSerialportForAndroidModule extends ReactContextBaseJavaModule im
             return;
         }
     }
-
     @ReactMethod
     public void close(int deviceId, Promise promise) {
         UsbSerialPortWrapper wrapper = usbSerialPorts.get(deviceId);

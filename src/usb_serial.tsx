@@ -37,8 +37,8 @@ export default class UsbSerial {
    * @param hexStr
    * @returns
    */
-  send(hexStr: string): Promise<null> {
-    return UsbSerialportForAndroid.send(this.deviceId, hexStr);
+  send(hexStr: string, hexEnabled: boolean = true): Promise<null> {
+    return UsbSerialportForAndroid.send(this.deviceId, hexStr, hexEnabled);
   }
 
   /**
