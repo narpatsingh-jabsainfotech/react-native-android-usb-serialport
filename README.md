@@ -27,7 +27,8 @@ try {
   // sub.remove();
 
   await usbSerialport.send('00FF');
-  
+  //await usbSerialport.send('00FF', false);  for sending string
+
   usbSerialport.close();
 } catch(err) {
   console.log(err);
